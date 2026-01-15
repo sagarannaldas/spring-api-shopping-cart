@@ -1,6 +1,7 @@
 package com.sagarannaldas.shopping.cart.controllers;
 
 import com.sagarannaldas.shopping.cart.dtos.UserDto;
+import com.sagarannaldas.shopping.cart.mappers.UserMapper;
 import com.sagarannaldas.shopping.cart.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,16 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 @RequestMapping("/users")
 public class UserController {
-
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @GetMapping
     public Iterable<UserDto> getAllUsers() {
         return userRepository.findAll()
                 .stream()
-                .map(user ->
-                        new UserDto(user.getId(), user.getName(), user.getEmail())
-                ).toList();
+                .map(userMapper::toUserDto)
+                .toList();
     }
 
     @GetMapping("/{id}")
@@ -31,7 +31,6 @@ public class UserController {
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
-        var userDto = new UserDto(user.getId(), user.getName(), user.getEmail());
-        return ResponseEntity.ok(userDto);
+        return ResponseEntity.ok(userMapper.toUserDto(user));
     }
 }
