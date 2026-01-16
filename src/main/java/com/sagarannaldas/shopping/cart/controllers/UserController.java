@@ -1,6 +1,7 @@
 package com.sagarannaldas.shopping.cart.controllers;
 
 import com.sagarannaldas.shopping.cart.dtos.RegisterUserRequest;
+import com.sagarannaldas.shopping.cart.dtos.UpdateUserRequest;
 import com.sagarannaldas.shopping.cart.dtos.UserDto;
 import com.sagarannaldas.shopping.cart.mappers.UserMapper;
 import com.sagarannaldas.shopping.cart.repositories.UserRepository;
@@ -55,5 +56,20 @@ public class UserController {
         var userDto = userMapper.toUserDto(user);
         var uri = uriComponentsBuilder.path("/users/{id}").buildAndExpand(user.getId()).toUri();
         return ResponseEntity.created(uri).body(userDto);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDto> updateUser(
+            @PathVariable(name = "id") Long id,
+            @RequestBody UpdateUserRequest request
+    ) {
+        var user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        userMapper.update(request, user);
+        userRepository.save(user);
+        return ResponseEntity.ok(userMapper.toUserDto(user));
+
     }
 }
