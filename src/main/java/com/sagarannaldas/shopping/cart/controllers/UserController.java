@@ -1,5 +1,6 @@
 package com.sagarannaldas.shopping.cart.controllers;
 
+import com.sagarannaldas.shopping.cart.dtos.RegisterUserRequest;
 import com.sagarannaldas.shopping.cart.dtos.UserDto;
 import com.sagarannaldas.shopping.cart.mappers.UserMapper;
 import com.sagarannaldas.shopping.cart.repositories.UserRepository;
@@ -7,6 +8,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+
 import java.util.Set;
 
 @RestController
@@ -40,5 +43,17 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(userMapper.toUserDto(user));
+    }
+
+    @PostMapping
+    public ResponseEntity<UserDto> createUser(
+            @RequestBody RegisterUserRequest request,
+            UriComponentsBuilder uriComponentsBuilder
+    ) {
+        var user = userMapper.toEntity(request);
+        user = userRepository.save(user);
+        var userDto = userMapper.toUserDto(user);
+        var uri = uriComponentsBuilder.path("/users/{id}").buildAndExpand(user.getId()).toUri();
+        return ResponseEntity.created(uri).body(userDto);
     }
 }
