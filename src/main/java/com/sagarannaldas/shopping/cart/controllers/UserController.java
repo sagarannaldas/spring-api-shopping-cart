@@ -30,7 +30,11 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserDto> getUserById(
+            @RequestHeader(name = "x-auth-token", required = false) String authToken,
+            @PathVariable Long id
+    ) {
+        System.out.println(authToken);
         var user = userRepository.findById(id).orElse(null);
         if (user == null) {
             return ResponseEntity.notFound().build();
