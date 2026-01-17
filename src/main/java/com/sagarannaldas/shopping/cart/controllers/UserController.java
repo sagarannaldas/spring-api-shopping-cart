@@ -11,11 +11,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -53,11 +51,17 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> createUser(
+    public ResponseEntity<?> registerUser(
             // MethodArgumentNotValidException
             @Valid @RequestBody RegisterUserRequest request,
             UriComponentsBuilder uriComponentsBuilder
     ) {
+        var userExists = userRepository.existsByEmail(request.getEmail());
+        if (userExists) {
+            return ResponseEntity.badRequest().body(
+                    Map.of("email", "Email is already registered")
+            );
+        }
         var user = userMapper.toEntity(request);
         user = userRepository.save(user);
         var userDto = userMapper.toUserDto(user);
