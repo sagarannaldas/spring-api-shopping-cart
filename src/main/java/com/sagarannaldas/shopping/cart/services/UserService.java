@@ -1,4 +1,4 @@
-package com.sagarannaldas.shopping.cart.controllers;
+package com.sagarannaldas.shopping.cart.services;
 
 import com.sagarannaldas.shopping.cart.repositories.UserRepository;
 import lombok.AllArgsConstructor;
