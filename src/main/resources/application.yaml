@@ -16,7 +16,7 @@ spring:
   jpa:
     show-sql: true
   jwt:
-    secret: ${JWT_SECRET}
+    secret: jJtvuHNBJKr87WLP6R8c+JVaAd0vqsF+H0YMaBN1AzgZkl1O0ihIJ4ys8T5DCBvrpFkvv7CdVnkwEm1/VhdRBQ==
 
 
 
