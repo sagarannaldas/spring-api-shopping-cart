@@ -6,6 +6,8 @@ import com.sagarannaldas.shopping.cart.dtos.UserDto;
 import com.sagarannaldas.shopping.cart.mappers.UserMapper;
 import com.sagarannaldas.shopping.cart.repositories.UserRepository;
 import com.sagarannaldas.shopping.cart.services.JwtService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,7 +29,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(
-            @Valid @RequestBody LoginRequest request
+            @Valid @RequestBody LoginRequest request,
+            HttpServletResponse response
     ) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -38,9 +41,17 @@ public class AuthController {
 
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
 
-        var token = jwtService.generateJwtToken(user);
+        var accessToken = jwtService.generateAccessToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
 
-        return ResponseEntity.ok(new JwtResponse(token));
+        var cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/auth/refresh");
+        cookie.setMaxAge(604800); // 7 days
+        cookie.setSecure(true);
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok(new JwtResponse(accessToken));
     }
 
     @PostMapping("/validate")
