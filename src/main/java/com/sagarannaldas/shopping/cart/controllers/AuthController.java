@@ -1,5 +1,6 @@
 package com.sagarannaldas.shopping.cart.controllers;
 
+import com.sagarannaldas.shopping.cart.config.JwtConfig;
 import com.sagarannaldas.shopping.cart.dtos.JwtResponse;
 import com.sagarannaldas.shopping.cart.dtos.LoginRequest;
 import com.sagarannaldas.shopping.cart.dtos.UserDto;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final JwtConfig jwtConfig;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
@@ -47,7 +49,7 @@ public class AuthController {
         var cookie = new Cookie("refreshToken", refreshToken);
         cookie.setHttpOnly(true);
         cookie.setPath("/auth/refresh");
-        cookie.setMaxAge(604800); // 7 days
+        cookie.setMaxAge(jwtConfig.getRefreshTokenExpiration()); // 7 days
         cookie.setSecure(true);
         response.addCookie(cookie);
 
