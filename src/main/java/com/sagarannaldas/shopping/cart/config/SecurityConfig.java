@@ -67,7 +67,7 @@ public class SecurityConfig {
                 .exceptionHandling(
                         c ->
                                 c.authenticationEntryPoint(
-                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                                        new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
         ;
 
         return http.build();

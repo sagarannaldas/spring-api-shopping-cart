@@ -4,6 +4,7 @@ import com.sagarannaldas.shopping.cart.dtos.ChangePasswordRequest;
 import com.sagarannaldas.shopping.cart.dtos.RegisterUserRequest;
 import com.sagarannaldas.shopping.cart.dtos.UpdateUserRequest;
 import com.sagarannaldas.shopping.cart.dtos.UserDto;
+import com.sagarannaldas.shopping.cart.entities.Role;
 import com.sagarannaldas.shopping.cart.mappers.UserMapper;
 import com.sagarannaldas.shopping.cart.repositories.UserRepository;
 import jakarta.validation.Valid;
@@ -66,6 +67,7 @@ public class UserController {
         }
         var user = userMapper.toEntity(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(Role.USER);
         user = userRepository.save(user);
         var userDto = userMapper.toUserDto(user);
         var uri = uriComponentsBuilder.path("/users/{id}").buildAndExpand(user.getId()).toUri();
